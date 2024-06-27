@@ -102,6 +102,13 @@ func (conn *Conn) PrepareContext(ctx context.Context, query string) (driver.Stmt
 func (conn *Conn) Prepare(query string) (driver.Stmt, error) { return conn.Conn.Prepare(query) }
 func (conn *Conn) Close() error                              { return conn.Conn.Close() }
 func (conn *Conn) Begin() (driver.Tx, error)                 { return conn.Conn.Begin() }
+func (conn *Conn) Ping(ctx context.Context) error {
+	p, ok := conn.Conn.(driver.Pinger)
+	if !ok {
+		return driver.ErrSkip
+	}
+	return p.Ping(ctx)
+}
 func (conn *Conn) BeginTx(ctx context.Context, opts driver.TxOptions) (driver.Tx, error) {
 	return conn.Conn.(driver.ConnBeginTx).BeginTx(ctx, opts)
 }
